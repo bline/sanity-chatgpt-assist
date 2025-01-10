@@ -1,0 +1,81 @@
+{
+  "name": "sanity-plugin-chatgpt-assist",
+  "version": "1.0.0",
+  "description": "Simple integration with ChatGPT API",
+  "keywords": [
+    "sanity",
+    "sanity-plugin"
+  ],
+  "homepage": "https://github.com/bline/sanity-chatgpt-assist#readme",
+  "bugs": {
+    "url": "https://github.com/bline/sanity-chatgpt-assist/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bline/sanity-chatgpt-assist.git"
+  },
+  "license": "MIT",
+  "author": "Scott Beck",
+  "sideEffects": false,
+  "type": "commonjs",
+  "exports": {
+    ".": {
+      "source": "./src/index.ts",
+      "import": "./dist/index.mjs",
+      "default": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist",
+    "sanity.json",
+    "src",
+    "v2-incompatible.js"
+  ],
+  "scripts": {
+    "build": "plugin-kit verify-package --silent && pkg-utils build --strict --check --clean",
+    "format": "prettier --write --cache --ignore-unknown .",
+    "link-watch": "plugin-kit link-watch",
+    "lint": "eslint .",
+    "prepublishOnly": "npm run build",
+    "watch": "pkg-utils watch --strict"
+  },
+  "dependencies": {
+    "@portabletext/react": "^3.2.0",
+    "@portabletext/types": "^2.0.13",
+    "@sanity/icons": "^3.5.6",
+    "@sanity/incompatible-plugin": "^1.0.5",
+    "@sanity/ui": "^2.10.12",
+    "@typescript-eslint/eslint-plugin": "^7.18.0",
+    "@typescript-eslint/parser": "^7.18.0",
+    "axios": "^1.7.9",
+    "uuid": "^11.0.3"
+  },
+  "devDependencies": {
+    "@sanity/pkg-utils": "^6.12.2",
+    "@sanity/plugin-kit": "^4.0.19",
+    "@types/react": "^19.0.2",
+    "eslint": "^8.57.1",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-config-sanity": "^7.1.3",
+    "eslint-plugin-prettier": "^5.2.1",
+    "eslint-plugin-react": "^7.37.3",
+    "eslint-plugin-react-hooks": "^5.1.0",
+    "prettier": "^3.4.2",
+    "prettier-plugin-packagejson": "^2.5.6",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "sanity": "^3.68.3",
+    "styled-components": "^6.1.13",
+    "typescript": "^5.7.2"
+  },
+  "peerDependencies": {
+    "react": "^18",
+    "sanity": "^3"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
