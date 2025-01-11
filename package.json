@@ -1,6 +1,6 @@
 {
   "name": "sanity-plugin-chatgpt-assist",
-  "version": "1.0.7",
+  "version": "1.0.8-alpha",
   "description": "Simple integration with ChatGPT API",
   "keywords": [
     "sanity",
