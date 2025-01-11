@@ -11,7 +11,7 @@ const defaultConfig: ChatGPTAssistConfig = {
 };
 
 export const chatGPTAssist = definePlugin<Partial<ChatGPTAssistConfig>>((config = {}) => {
-  const pluginConfig: ChatGPTAssistConfig = { supportedFields: [], apiKey: config.apiKey || '' };
+  const pluginConfig: ChatGPTAssistConfig = { supportedFields: [], apiKey: config.apiKey, apiUrl: config.apiUrl };
   if (!config.supportedFields) {
     pluginConfig.supportedFields = [...defaultConfig.supportedFields];
   }
