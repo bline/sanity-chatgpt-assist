@@ -23,7 +23,7 @@ export interface ChatGPTPromptGroup {
 
 
 export interface ChatGPTAssistConfig {
-  apiKey: string;
+  apiKey?: string;
   supportedFields: ChatGPTAssistSupportedFields[];/*
     { documentType: '*', fieldKey: 'body' }, // Generic support for any document with a 'content' field
     { documentType: 'blogPost', fieldKey: 'body' }, // Specific support for 'body' field in 'blogPost'
@@ -51,7 +51,8 @@ export interface ChatGPTHistory {
 }
 
 export interface GenerateContentOptions {
-  apiKey: string;
+  apiKey?: string;
+  apiUrl?: string;
   portableText?: PortableTextBlock[]|null;
   prompt?: string|null;
   chatHistory?: ChatGPTHistory|null;

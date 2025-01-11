@@ -5,7 +5,6 @@ import { ChatGPTAssistConfig } from './types';
 
 
 const defaultConfig: ChatGPTAssistConfig = {
-  apiKey: 'Required',
   supportedFields: [
     { documentType: 'post', fieldKey: 'body.blockContent' },
   ]
@@ -13,10 +12,6 @@ const defaultConfig: ChatGPTAssistConfig = {
 
 export const chatGPTAssist = definePlugin<Partial<ChatGPTAssistConfig>>((config = {}) => {
   const pluginConfig: ChatGPTAssistConfig = { supportedFields: [], apiKey: config.apiKey || '' };
-  if (!config || !config.apiKey) {
-    throw new Error("apiKey is required");
-  }
-  pluginConfig.apiKey = config.apiKey;
   if (!config.supportedFields) {
     pluginConfig.supportedFields = [...defaultConfig.supportedFields];
   }
