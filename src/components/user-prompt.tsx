@@ -40,7 +40,7 @@ export const UserPrompt: React.FC<UserPromptProps> = ({value, onChange, apiKey, 
         }
         setIsLoading(false);
         setPrompt('');
-    }, [apiKey, value, chatHistory, promptGroups, prompt, onChange, setError, setIsLoading, setPrompt]);
+    }, [apiKey, apiUrl, value, chatHistory, promptGroups, prompt, onChange, setError, setIsLoading, setPrompt]);
     return (
         <Flex align="stretch" direction={"column"} gap={3} marginBottom={3} padding={3} width={'100%'}>
             <TextArea

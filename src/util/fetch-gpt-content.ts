@@ -112,7 +112,7 @@ export const fetchGPTContent = async ({
   chatHistory,
   promptGroups,
   apiUrl,
-}: GenerateContentOptions & { apiUrl?: string }): Promise<PortableTextBlock[]> => {
+}: GenerateContentOptions): Promise<PortableTextBlock[]> => {
   let generatedPortableText: PortableTextBlock[];
   const developerPrompt = formatDeveloperPrompt(promptGroups, chatHistory);
   const messages: ChatGPTAPIMessage[] = [
