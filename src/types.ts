@@ -64,7 +64,7 @@ export interface ChatHistoryProps {
 
 export interface UserPromptProps {
   value?: PortableTextBlock[];
-  apiKey: string;
+  apiKey?: string;
   onChange: (portableText: PortableTextBlock[]) => void; 
 }
 
