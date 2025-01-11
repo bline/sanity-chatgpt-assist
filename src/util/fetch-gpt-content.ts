@@ -111,7 +111,7 @@ export const fetchGPTContent = async ({
   apiKey,
   chatHistory,
   promptGroups,
-  apiUrl = "https://api.openai.com/v1/chat/completions",
+  apiUrl,
 }: GenerateContentOptions & { apiUrl?: string }): Promise<PortableTextBlock[]> => {
   let generatedPortableText: PortableTextBlock[];
   const developerPrompt = formatDeveloperPrompt(promptGroups, chatHistory);
@@ -154,7 +154,8 @@ export const fetchGPTContent = async ({
     ];
   }
   try {
-    const response = await fetch(apiUrl, {
+    const response = await fetch(apiUrl ?? "https://api.openai.com/v1/chat/completions", {
+      mode: "cors",
       method: "POST",
       headers: {
         ...(apiKey && { Authorization: `Bearer ${apiKey}` }),
