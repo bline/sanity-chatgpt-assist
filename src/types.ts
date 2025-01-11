@@ -56,6 +56,7 @@ export interface GenerateContentOptions {
   apiUrl?: string;
   portableText?: PortableTextBlock[]|null;
   prompt?: string|null;
+  client: SanityClient;
   chatHistory?: ChatGPTHistory|null;
   promptGroups: ChatGPTPromptGroup[];
 }

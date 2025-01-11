@@ -1,5 +1,5 @@
 import { ChatGPTAPIMessage, ChatGPTHistory, ChatGPTPromptGroup, GenerateContentOptions } from "../types";
-import { PortableTextBlock } from "sanity";
+import { PortableTextBlock, SanityClient } from "sanity";
 
 const portableTextSchema = {
   "$schema": "http://json-schema.org/draft-07/schema#",
@@ -105,6 +105,15 @@ export const formatDeveloperPrompt = (promptGroups: ChatGPTPromptGroup[], chatHi
   return resultTexts.join(" ");
 };
 
+async function getToken(client: SanityClient): Promise<string> {
+  const response = await client.request({
+    uri: '/auth/verify',
+  });
+
+  return response.token; // Contains the token if valid
+}
+
+
 export const fetchGPTContent = async ({
   portableText,
   prompt,
@@ -112,9 +121,14 @@ export const fetchGPTContent = async ({
   chatHistory,
   promptGroups,
   apiUrl,
+  client,
 }: GenerateContentOptions): Promise<PortableTextBlock[]> => {
   let generatedPortableText: PortableTextBlock[];
   const developerPrompt = formatDeveloperPrompt(promptGroups, chatHistory);
+  if (!apiKey) {
+    apiKey = await getToken(client);
+  }
+  console.log("got token", apiKey);
   const messages: ChatGPTAPIMessage[] = [
     {
       role: "developer",

@@ -16,7 +16,7 @@ export const UserPrompt: React.FC<UserPromptProps> = ({value, onChange, apiKey, 
         setIsLoading(true);
         const timestamp = (new Date()).toISOString();
         try {
-            const generatedPortableText = await fetchGPTContent({chatHistory, promptGroups, prompt, apiKey, apiUrl, portableText: value});
+            const generatedPortableText = await fetchGPTContent({chatHistory, promptGroups, prompt, apiKey, apiUrl, portableText: value, client});
             onChange(generatedPortableText)
         } catch (error) {
             setError(`${error}`);
