@@ -105,14 +105,6 @@ export const formatDeveloperPrompt = (promptGroups: ChatGPTPromptGroup[], chatHi
   return resultTexts.join(" ");
 };
 
-async function getToken(client: SanityClient): Promise<string> {
-  const response = await client.request({
-    uri: '/auth/verify',
-  });
-
-  return response.token; // Contains the token if valid
-}
-
 
 export const fetchGPTContent = async ({
   portableText,
@@ -125,10 +117,9 @@ export const fetchGPTContent = async ({
 }: GenerateContentOptions): Promise<PortableTextBlock[]> => {
   let generatedPortableText: PortableTextBlock[];
   const developerPrompt = formatDeveloperPrompt(promptGroups, chatHistory);
-  if (!apiKey) {
-    apiKey = await getToken(client);
+  if (typeof apiKey === 'function') {
+    apiKey = await apiKey(client);
   }
-  console.log("got token", apiKey);
   const messages: ChatGPTAPIMessage[] = [
     {
       role: "developer",

@@ -23,7 +23,7 @@ export interface ChatGPTPromptGroup {
 
 
 export interface ChatGPTAssistConfig {
-  apiKey?: string;
+  apiKey?: string | ((client: SanityClient) => Promise<string>);
   apiUrl?: string;
   supportedFields: ChatGPTAssistSupportedFields[];/*
     { documentType: '*', fieldKey: 'body' }, // Generic support for any document with a 'content' field
@@ -52,7 +52,7 @@ export interface ChatGPTHistory {
 }
 
 export interface GenerateContentOptions {
-  apiKey?: string;
+  apiKey?: string | ((client: SanityClient) => Promise<string>);
   apiUrl?: string;
   portableText?: PortableTextBlock[]|null;
   prompt?: string|null;
