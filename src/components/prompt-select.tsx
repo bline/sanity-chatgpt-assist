@@ -1,28 +1,39 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useClient } from "sanity";
-import { Box, Text, Tab, TabList, TabPanel, Radio, Checkbox, useTheme, Card } from "@sanity/ui";
-import styled from "styled-components";
+import { Box, Text, Tab, TabList, TabPanel, Radio, Checkbox, useTheme, Card, BoxProps } from "@sanity/ui";
 import { v4 as uuidv4 } from "uuid";
 import { usePromptDataContext } from "../context/prompt-context";
 import { formatDeveloperPrompt } from "../util/fetch-gpt-content";
 import { ChatBox } from "./chat-box";
 
-const HoverableLabel = styled('label').withConfig({
-  shouldForwardProp: (prop) => prop !== 'isDarkMode'
-})<{ isDarkMode: boolean }>`
-  display: flex;
-  align-items: center;
-  padding: 8px;
-  border: 1px solid ${({ isDarkMode }) => (isDarkMode ? "#444" : "#ddd")};
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-  background-color: ${({ isDarkMode }) => (isDarkMode ? "#333" : "white")};
+const HoverableLabel: React.FC<{ isDarkMode: boolean; children: React.ReactNode }> = ({ isDarkMode, children }) => {
+  const hoverStyle = {
+    display: "flex",
+    alignItems: "center",
+    padding: "8px",
+    border: `1px solid ${isDarkMode ? "#444" : "#ddd"}`,
+    borderRadius: "4px",
+    cursor: "pointer",
+    transition: "background-color 0.2s ease",
+    backgroundColor: isDarkMode ? "#333" : "white",
+  };
 
-  &:hover {
-    background-color: ${({ isDarkMode }) => (isDarkMode ? "#444" : "#f0f0f0")};
-  }
-`;
+  const hoverEffect = {
+    backgroundColor: isDarkMode ? "#444" : "#f0f0f0",
+  };
+
+  const [hover, setHover] = useState(false);
+
+  return (
+    <Box
+      style={{ ...hoverStyle, ...(hover ? hoverEffect : {}) }}
+      onMouseEnter={() => setHover(true)}
+      onMouseLeave={() => setHover(false)}
+    >
+      {children}
+    </Box>
+  );
+};
 
 const PromptSelect: React.FC<{}> = () => {
   const client = useClient({ apiVersion: "2021-06-07" });
