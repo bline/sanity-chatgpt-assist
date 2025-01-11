@@ -6,7 +6,7 @@ import { usePromptDataContext } from "../context/prompt-context";
 import { useClient } from "sanity";
 import { fetchGPTContent } from "../util/fetch-gpt-content";
 
-export const UserPrompt: React.FC<UserPromptProps> = ({value, onChange, apiKey}) => {
+export const UserPrompt: React.FC<UserPromptProps> = ({value, onChange, apiKey, apiUrl}) => {
     const [prompt, setPrompt] = useState<string>('');  // Use value to initialize input
     const client = useClient({apiVersion: "2021-06-07"});  // Get the Sanity client from useClient
 
@@ -16,7 +16,7 @@ export const UserPrompt: React.FC<UserPromptProps> = ({value, onChange, apiKey})
         setIsLoading(true);
         const timestamp = (new Date()).toISOString();
         try {
-            const generatedPortableText = await fetchGPTContent({chatHistory, promptGroups, prompt, apiKey: apiKey, portableText: value});
+            const generatedPortableText = await fetchGPTContent({chatHistory, promptGroups, prompt, apiKey, apiUrl, portableText: value});
             onChange(generatedPortableText)
         } catch (error) {
             setError(`${error}`);

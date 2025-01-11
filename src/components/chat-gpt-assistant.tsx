@@ -73,7 +73,7 @@ const ChatGPTAssistant: React.FC<PortableTextInputProps & { pluginConfig: ChatGP
                 <PromptDataProvider documentId={documentId} documentType={documentType} fieldKey={fieldKey} client={client}>
                     <PromptSelect />
                     <ChatHistoryList />
-                    <UserPrompt value={portableText} onChange={onChange} apiKey={pluginConfig.apiKey} />
+                    <UserPrompt value={portableText} onChange={onChange} apiKey={pluginConfig.apiKey} apiUrl={pluginConfig.apiUrl} />
                 </PromptDataProvider>
             </Box>
         </Card>
