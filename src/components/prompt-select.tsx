@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useClient } from "sanity";
-import { Box, Text, Tab, TabList, TabPanel, Radio, Checkbox, useTheme, Card, BoxProps } from "@sanity/ui";
+import { Box, Text, Tab, TabList, TabPanel, Radio, Checkbox, useTheme, Card } from "@sanity/ui";
 import { v4 as uuidv4 } from "uuid";
 import { usePromptDataContext } from "../context/prompt-context";
 import { formatDeveloperPrompt } from "../util/fetch-gpt-content";

@@ -1,6 +1,6 @@
 import { BoxProps } from "@sanity/ui";
 import React from "react";
-import { PortableTextBlock, SanityClient } from "sanity";
+import type { PortableTextBlock, SanityClient } from "sanity";
 
 export interface ChatGPTAssistSupportedFields {
   documentType: string;

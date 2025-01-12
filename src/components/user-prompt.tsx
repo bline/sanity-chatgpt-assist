@@ -33,7 +33,7 @@ export const UserPrompt: React.FC<UserPromptProps> = ({value, onChange, apiKey, 
                     .commit();
             } catch (error) {
                 setError(`${error}`);
-                console.log("failed to insert message", error);
+                console.error("failed to insert message", error);
             } finally {
                 setChatHistory({...chatHistory, messages});
             }

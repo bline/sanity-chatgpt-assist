@@ -14,11 +14,11 @@ Add it as a plugin in `sanity.config.ts` (or .js):
 
 ```ts
 import {defineConfig} from 'sanity'
-import {myPlugin} from 'sanity-plugin-chatgpt-assist'
+import {chatGPTAssist} from 'sanity-plugin-chatgpt-assist'
 
 export default defineConfig({
   //...
-  plugins: [myPlugin({})],
+  plugins: [myPlugin({apiKey: string|async function, apiUrl: string})],
 })
 ```
 

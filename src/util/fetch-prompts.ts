@@ -1,5 +1,5 @@
 import { SanityClient } from "sanity";
-import { ChatGPTPrompt, ChatGPTPromptGroup } from "../types";
+import { ChatGPTPromptGroup } from "../types";
 
 // Singleton cache with reactive updates
 export class PromptCache {

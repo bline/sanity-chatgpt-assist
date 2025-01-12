@@ -1,4 +1,4 @@
-import { ChatGPTAssistConfig } from '../types';
+import { type ChatGPTAssistConfig } from '../types';
 import gptPrompt from './gpt-prompt';
 import gptChat from './gpt-chat';
 import gptPromptGroup from './gpt-prompt-group';

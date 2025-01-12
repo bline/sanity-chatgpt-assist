@@ -1,4 +1,4 @@
-import { Box, Button, Flex, Text, TextArea, useTheme } from "@sanity/ui";
+import { Box, Button, Flex, Text, TextArea } from "@sanity/ui";
 import { useEffect, useRef, useState } from "react";
 import { useClient } from "sanity";
 import { EditIcon, TrashIcon } from "@sanity/icons";

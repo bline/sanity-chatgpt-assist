@@ -26,7 +26,6 @@ export class ChatCache {
         // Invalidate cache every 5 minutes
         if ((!this.cache || now - this.lastFetch > 5 * 60 * 1000) && !this.lock) {
             this.lock = true;
-            console.log("Looking for document", documentId);
             const draftDocId = documentId.indexOf("drafts.") === 0 ? documentId : `drafts.${documentId}`;
             const docId = documentId.indexOf("drafts.") === 0 ? documentId.slice(7) : documentId;
             const query = `
@@ -36,7 +35,6 @@ export class ChatCache {
                     promptRefs[]{_ref, _type, _key}
                 }`;
             this.cache = await client.fetch<ChatGPTHistory>(query, { docId, draftDocId, fieldKey });
-            console.log("Found: ", this.cache);
             if (!this.cache) {
                 try {
                     this.cache = await client.create<Omit<ChatGPTHistory, '_id'>>({
@@ -47,7 +45,7 @@ export class ChatCache {
                         messages: []
                     });
                 } catch (error) {
-                    console.log("create failed", error);
+                    console.error("create failed", error);
                 }
             }
             this.lastFetch = now;
@@ -72,7 +70,6 @@ export class ChatCache {
         return () => {
             this.subscribers = this.subscribers.filter((cb) => cb !== callback);
             if (this.subscribers.length === 0) {
-                console.log("unsub");
                 this.subscription?.unsubscribe();
                 this.subscription = null;
             }

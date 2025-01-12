@@ -1,5 +1,5 @@
 import { ChatGPTAPIMessage, ChatGPTHistory, ChatGPTPromptGroup, GenerateContentOptions } from "../types";
-import { PortableTextBlock, SanityClient } from "sanity";
+import { PortableTextBlock } from "sanity";
 
 const portableTextSchema = {
   "$schema": "http://json-schema.org/draft-07/schema#",
