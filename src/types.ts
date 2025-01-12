@@ -1,6 +1,6 @@
 import { BoxProps } from "@sanity/ui";
-import React, { MouseEventHandler } from "react";
-import { ArrayOfObjectsInputProps, ArraySchemaType, FormPatch, PatchEvent, PortableTextBlock, SanityClient } from "sanity";
+import React from "react";
+import { PortableTextBlock, SanityClient } from "sanity";
 
 export interface ChatGPTAssistSupportedFields {
   documentType: string;
@@ -21,9 +21,10 @@ export interface ChatGPTPromptGroup {
   prompts: ChatGPTPrompt[];
 }
 
+export type ApiKey = string | ((client: SanityClient) => Promise<string>);
 
 export interface ChatGPTAssistConfig {
-  apiKey?: string | ((client: SanityClient) => Promise<string>);
+  apiKey?: ApiKey;
   apiUrl?: string;
   supportedFields: ChatGPTAssistSupportedFields[];/*
     { documentType: '*', fieldKey: 'body' }, // Generic support for any document with a 'content' field
@@ -52,7 +53,7 @@ export interface ChatGPTHistory {
 }
 
 export interface GenerateContentOptions {
-  apiKey?: string | ((client: SanityClient) => Promise<string>);
+  apiKey?: ApiKey;
   apiUrl?: string;
   portableText?: PortableTextBlock[]|null;
   prompt?: string|null;
@@ -66,7 +67,7 @@ export interface ChatHistoryProps {
 
 export interface UserPromptProps {
   value?: PortableTextBlock[];
-  apiKey?: string;
+  apiKey?: ApiKey;
   apiUrl?: string;
   onChange: (portableText: PortableTextBlock[]) => void; 
 }
