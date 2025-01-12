@@ -1,6 +1,6 @@
 import { Box, Button, Flex, Spinner, Text, TextArea } from "@sanity/ui";
 import React, { useCallback, useState } from "react";
-import { v4 as uuidv4 } from 'uuid';
+import { nanoid } from 'nanoid';
 import { ChatGPTMessage, UserPromptProps } from "../types";
 import { usePromptDataContext } from "../context/prompt-context";
 import { useClient } from "sanity";
@@ -23,7 +23,7 @@ export const UserPrompt: React.FC<UserPromptProps> = ({value, onChange, apiKey, 
             console.error('Error generating content:', error);
         }
         if (chatHistory && prompt.trim().length) {
-            const _key = uuidv4();
+            const _key = nanoid();
             const message: ChatGPTMessage = {role: "user", content: prompt, timestamp, _key };
             const messages: ChatGPTMessage[] = [...chatHistory.messages,  message];
             try {

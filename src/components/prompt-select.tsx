@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useClient } from "sanity";
 import { Box, Text, Tab, TabList, TabPanel, Radio, Checkbox, useTheme, Card } from "@sanity/ui";
-import { v4 as uuidv4 } from "uuid";
+import { nanoid } from 'nanoid';
 import { usePromptDataContext } from "../context/prompt-context";
 import { formatDeveloperPrompt } from "../util/fetch-gpt-content";
 import { ChatBox } from "./chat-box";
@@ -48,7 +48,7 @@ const PromptSelect: React.FC<{}> = () => {
     (groupId: string, promptId: string, isExclusive: boolean, isChecked: boolean) => {
       if (!chatHistory) return;
 
-      const _key = uuidv4();
+      const _key = nanoid();
       const filterOut = isExclusive
         ? promptGroups.find(({ _id }) => _id === groupId)?.prompts.map(({ _id }) => _id) || []
         : [];
