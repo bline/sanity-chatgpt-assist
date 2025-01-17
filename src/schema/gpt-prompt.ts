@@ -1,6 +1,8 @@
-import { defineField, defineType } from "sanity";
-import { ChatGPTAssistConfig } from "../types";
+import {defineField, defineType} from 'sanity'
 
+import {ChatGPTAssistConfig} from '../types'
+
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/no-unused-vars
 export default (_: ChatGPTAssistConfig) => {
     return defineType({
         name: 'gpt_prompt',
@@ -18,7 +20,7 @@ export default (_: ChatGPTAssistConfig) => {
                 title: 'Text',
                 type: 'text',
                 description: 'Text sent to ChatGPT AI as part of the developer instructions',
-            })
+            }),
         ],
-    });
-};
+    })
+}

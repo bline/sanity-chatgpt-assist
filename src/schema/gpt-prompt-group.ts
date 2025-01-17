@@ -1,7 +1,8 @@
-import { defineField, defineType } from "sanity";
-import { ChatGPTAssistConfig } from "../types";
+import {defineField, defineType} from 'sanity'
 
+import {ChatGPTAssistConfig} from '../types'
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/explicit-module-boundary-types
 export default (_: ChatGPTAssistConfig) => {
     return defineType({
         name: 'gpt_prompt_group',
@@ -32,10 +33,10 @@ export default (_: ChatGPTAssistConfig) => {
                 of: [
                     {
                         type: 'reference',
-                        to: [{ type: 'gpt_prompt' }]
-                    }
+                        to: [{type: 'gpt_prompt'}],
+                    },
                 ],
-            })
+            }),
         ],
-    });
-};
+    })
+}

@@ -1,51 +1,61 @@
-import React, { useState, useEffect } from 'react';
-import { Box, Button, Card } from '@sanity/ui';
-import { PatchEvent, set, useFormValue, PortableTextBlock, useClient } from 'sanity';
-import { PortableTextInputProps } from 'sanity';
-import { ChatGPTAssistConfig, ChatGPTAssistSupportedFields } from '../types';
-import { AddCircleIcon, RemoveCircleIcon } from '@sanity/icons';
-import PromptSelect from './prompt-select';
-import { ChatHistoryList } from './chat-history';
-import { UserPrompt } from './user-prompt';
-import { PromptDataProvider } from '../context/prompt-context';
+import {AddCircleIcon, RemoveCircleIcon} from '@sanity/icons'
+import {Box, Button, Card} from '@sanity/ui'
+import React, {useEffect, useState} from 'react'
+import {PatchEvent, PortableTextBlock, set, useClient, useFormValue} from 'sanity'
+import {PortableTextInputProps} from 'sanity'
 
-const isSupportedField = (supportedFields: ChatGPTAssistSupportedFields[], documentType: string, fieldPath: string) => {
+import {PromptDataProvider} from '../context/prompt-context'
+import {ChatGPTAssistConfig, ChatGPTAssistSupportedFields} from '../types'
+import {ChatHistoryList} from './chat-history'
+import PromptSelect from './prompt-select'
+import {UserPrompt} from './user-prompt'
+
+const isSupportedField = (
+    supportedFields: ChatGPTAssistSupportedFields[],
+    documentType: string,
+    fieldPath: string,
+) => {
     return supportedFields.some((val) => {
         if (val.documentType === documentType || val.documentType === '*') {
             if (fieldPath === val.fieldKey) {
-                return true;
+                return true
             }
         }
-        return false;
+        return false
     })
 }
 
-const ChatGPTAssistant: React.FC<PortableTextInputProps & { pluginConfig: ChatGPTAssistConfig }> = ({ value, elementProps, pluginConfig, ...props }) => {
-    const client = useClient({apiVersion: "2021-06-07"});  // Get the Sanity client from useClient
-    const [portableText, setPortableText] = useState<PortableTextBlock[]>();
-    const [isCollapsed, setIsCollapsed] = useState(true);
+const ChatGPTAssistant: React.FC<PortableTextInputProps & {pluginConfig: ChatGPTAssistConfig}> = ({
+    value,
+    elementProps,
+    pluginConfig,
+    ...props
+}) => {
+    const client = useClient({apiVersion: '2021-06-07'}) // Get the Sanity client from useClient
+    const [portableText, setPortableText] = useState<PortableTextBlock[]>()
+    const [isCollapsed, setIsCollapsed] = useState(true)
 
-    const documentType = useFormValue(['_type']) as string;
-    const documentId = useFormValue(['_id']) as string;
-    const fieldKey = (props.path.length ? props.path.join('.') + '.' : '') + props.schemaType.name;
+    const documentType = useFormValue(['_type']) as string
+    const documentId = useFormValue(['_id']) as string
+    const fieldKey = (props.path.length ? `${props.path.join('.')}.` : '') + props.schemaType.name
 
     useEffect(() => {
         if (value && Array.isArray(value)) {
-            setPortableText(value);
+            setPortableText(value)
         }
-    }, [value, setPortableText]);
+    }, [value, setPortableText])
 
     if (!isSupportedField(pluginConfig.supportedFields, documentType, fieldKey)) {
         return props.renderDefault({
             ...props,
             elementProps,
             value,
-        });
+        })
     }
     const onChange = (generatedPortableText: PortableTextBlock[]) => {
-        setPortableText(generatedPortableText);
+        setPortableText(generatedPortableText)
         props.onChange(PatchEvent.from([set(generatedPortableText)]))
-    };
+    }
     return (
         <Card>
             {props.renderDefault({
@@ -53,12 +63,12 @@ const ChatGPTAssistant: React.FC<PortableTextInputProps & { pluginConfig: ChatGP
                 elementProps,
                 value: portableText,
             })}
-            <Button 
+            <Button
                 onClick={() => setIsCollapsed((prev) => !prev)}
                 mode="ghost"
                 tone="primary"
-                padding={[2,2,3]}
-                fontSize={[1,1,2]}
+                padding={[2, 2, 3]}
+                fontSize={[1, 1, 2]}
                 style={{marginTop: '20px'}}
                 icon={isCollapsed ? AddCircleIcon : RemoveCircleIcon}
                 text={isCollapsed ? 'AI Assistant' : 'Collapse'}
@@ -70,14 +80,24 @@ const ChatGPTAssistant: React.FC<PortableTextInputProps & { pluginConfig: ChatGP
                     transition: 'max-height 0.3s ease',
                 }}
             >
-                <PromptDataProvider documentId={documentId} documentType={documentType} fieldKey={fieldKey} client={client}>
+                <PromptDataProvider
+                    documentId={documentId}
+                    documentType={documentType}
+                    fieldKey={fieldKey}
+                    client={client}
+                >
                     <PromptSelect />
                     <ChatHistoryList />
-                    <UserPrompt value={portableText} onChange={onChange} apiKey={pluginConfig.apiKey} apiUrl={pluginConfig.apiUrl} />
+                    <UserPrompt
+                        value={portableText}
+                        onChange={onChange}
+                        apiKey={pluginConfig.apiKey}
+                        apiUrl={pluginConfig.apiUrl}
+                    />
                 </PromptDataProvider>
             </Box>
         </Card>
-    );
-};
+    )
+}
 
-export default ChatGPTAssistant;
+export default ChatGPTAssistant
