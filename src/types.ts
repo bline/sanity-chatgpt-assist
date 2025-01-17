@@ -59,7 +59,7 @@ export interface GenerateContentOptions {
     prompt?: string | null
     client: SanityClient
     chatHistory?: ChatGPTHistory | null
-    promptGroups: ChatGPTPromptGroup[]
+    promptGroups: ChatGPTPromptGroup[] | null
 }
 
 export interface ChatHistoryProps {}
@@ -81,8 +81,8 @@ export type PromptDataProviderProps = React.PropsWithChildren<{
 export type PropDataStateContext = {
     chatHistory: ChatGPTHistory | null
     setChatHistory: React.Dispatch<React.SetStateAction<ChatGPTHistory | null>>
-    promptGroups: ChatGPTPromptGroup[]
-    setPromptGroups: React.Dispatch<React.SetStateAction<ChatGPTPromptGroup[]>>
+    promptGroups: ChatGPTPromptGroup[] | null
+    setPromptGroups: React.Dispatch<React.SetStateAction<ChatGPTPromptGroup[] | null>>
     isLoading: boolean
     setIsLoading: React.Dispatch<React.SetStateAction<boolean>>
     error: string | null

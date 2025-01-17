@@ -21,7 +21,7 @@ const PromptDataProvider: React.FC<PromptDataProviderProps> = ({
     fieldKey,
 }) => {
     const [chatHistory, setChatHistory] = useState<ChatGPTHistory | null>(null)
-    const [promptGroups, setPromptGroups] = useState<ChatGPTPromptGroup[]>([])
+    const [promptGroups, setPromptGroups] = useState<ChatGPTPromptGroup[] | null>([])
     const [isLoading, setIsLoading] = useState<boolean>(true)
     const [error, setError] = useState<string | null>(null)
 

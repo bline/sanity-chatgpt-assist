@@ -99,22 +99,23 @@ const portableTextSchema = {
 }
 
 export const formatDeveloperPrompt = (
-    promptGroups: ChatGPTPromptGroup[],
+    promptGroups: ChatGPTPromptGroup[] | null,
     chatHistory?: ChatGPTHistory | null,
 ): string => {
-    const resultTexts: string[] = promptGroups
-        .map((group) =>
-            group.exclusive
-                ? group.prompts.find(({_id}) =>
-                      chatHistory?.promptRefs.some(({_ref}) => _ref === _id),
-                  )
-                : group.prompts.filter(({_id}) =>
-                      chatHistory?.promptRefs.some(({_ref}) => _ref === _id),
-                  ),
-        )
-        .flat() // flat because filter will return an array
-        .filter((prompt) => !!prompt)
-        .map(({text}) => text)
+    const resultTexts: string[] =
+        promptGroups
+            ?.map((group: ChatGPTPromptGroup) =>
+                group.exclusive
+                    ? group.prompts.find(({_id}) =>
+                          chatHistory?.promptRefs.some(({_ref}) => _ref === _id),
+                      )
+                    : group.prompts.filter(({_id}) =>
+                          chatHistory?.promptRefs.some(({_ref}) => _ref === _id),
+                      ),
+            )
+            .flat() // flat because filter will return an array
+            .filter((prompt) => !!prompt)
+            .map(({text}) => text) || []
     return resultTexts.join(' ')
 }
 

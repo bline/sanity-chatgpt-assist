@@ -62,7 +62,7 @@ const PromptSelect: React.FC<object> = () => {
 
             const _key = nanoid()
             const filterOut = isExclusive
-                ? promptGroups.find(({_id}) => _id === groupId)?.prompts.map(({_id}) => _id) || []
+                ? promptGroups?.find(({_id}) => _id === groupId)?.prompts.map(({_id}) => _id) || []
                 : []
 
             let updatedPromptRefs: ChatGPTHistory['promptRefs'] = []
@@ -126,7 +126,7 @@ const PromptSelect: React.FC<object> = () => {
         <Box marginTop={3}>
             <TabList space={2}>
                 <>
-                    {promptGroups.map((group) => (
+                    {promptGroups?.map((group) => (
                         <Tab
                             key={group._id}
                             aria-controls={`${group._id}-panel`}
@@ -147,7 +147,7 @@ const PromptSelect: React.FC<object> = () => {
             </TabList>
 
             <>
-                {promptGroups.map((group) => (
+                {promptGroups?.map((group) => (
                     <TabPanel
                         key={group._id}
                         aria-labelledby={`${group._id}-tab`}
