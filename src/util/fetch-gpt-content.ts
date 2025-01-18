@@ -173,7 +173,7 @@ export const fetchGPTContent = async ({
             mode: 'cors',
             method: 'POST',
             headers: {
-                ...(apiKey && {Authorization: `Bearer ${apiKeyResolved}`}),
+                ...(apiKeyResolved && {Authorization: `Bearer ${apiKeyResolved}`}),
                 'Content-Type': 'application/json',
             },
             credentials: 'include', // Ensure user credentials are passed
