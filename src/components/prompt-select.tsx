@@ -160,13 +160,7 @@ const PromptSelect: React.FC<object> = () => {
                                     <Radio
                                         name={group._id}
                                         value="none"
-                                        checked={
-                                            !chatHistory?.promptRefs?.some((ref) =>
-                                                group.prompts.some(
-                                                    (prompt) => prompt._id === ref._ref,
-                                                ),
-                                            )
-                                        }
+                                        checked={!chatHistory?.promptRefs?.length}
                                         onChange={handleCheckboxChange(group._id, null, true)}
                                     />
                                     <Text
