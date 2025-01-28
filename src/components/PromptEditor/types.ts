@@ -1,3 +1,4 @@
+import {IconDefinition} from '@fortawesome/free-solid-svg-icons'
 import React from 'react'
 
 export type KeyboardKey = string
@@ -17,9 +18,18 @@ export type Handler = () => void
 
 export type CreateKeyboardKeyMapProps = Record<KeyboardKey, Handler>
 
+export type ActionRegistration = {
+  type?: 'mode' | 'boolean' | 'other'
+  shortcut?: string
+  description?: string
+  handler: () => void
+}
+
+export type ActionRegistrationStore = Omit<ActionRegistration, 'handler'> & {name: string}
+
 export type EditorContextType = {
   // accessors
-  fullscreenMode: 'normal' | 'panel' | 'fullscreen'
+  editorSizeMode: 'normal' | 'panel' | 'fullscreen'
   isAutocompleteEnabled: boolean
   isEditorFocused: boolean
   isKeyboardHelpShown: boolean
@@ -32,7 +42,7 @@ export type EditorContextType = {
   editorFlashStyles: React.CSSProperties | null
 
   // setters
-  setFullscreenMode: React.Dispatch<React.SetStateAction<'normal' | 'panel' | 'fullscreen'>>
+  setEditorSizeMode: React.Dispatch<React.SetStateAction<'normal' | 'panel' | 'fullscreen'>>
   setIsAutocompleteEnabled: React.Dispatch<React.SetStateAction<boolean>>
   setIsEditorFocused: React.Dispatch<React.SetStateAction<boolean>>
   setIsKeyboardHelpShown: React.Dispatch<React.SetStateAction<boolean>>
@@ -44,6 +54,14 @@ export type EditorContextType = {
   setToolbarPosition: React.Dispatch<React.SetStateAction<'left' | 'center' | 'right'>>
   setEditorFlashStyles: React.Dispatch<React.SetStateAction<React.CSSProperties | null>>
 
+  // actions
+  addAction: (name: string, action: ActionRegistration) => void
+  getAction: (name: string) => ActionRegistration | undefined
+  hasAction: (name: string) => boolean
+  removeAction: (name: string) => void
+  updateAction: (name: string, updates: ActionRegistrationStore) => void
+  callActionHandler: (name: string) => void
+
   // handlers
   handleHideToolbar: () => void
   handleSetToolbarPositionCenter: () => void
@@ -51,7 +69,6 @@ export type EditorContextType = {
   handleSetToolbarPositionRight: () => void
   handleShowToolbar: () => void
   handleToggleAutocomplete: () => void
-  handleToggleFullscreen: () => void
   handleToggleKeyboardHelp: () => void
   handleToggleLineNumbers: () => void
   handleToggleLineWrapping: () => void
@@ -66,6 +83,14 @@ export type EditorContextType = {
   soundDisabled: React.RefObject<boolean>
   toolbarHideTimeout: React.RefObject<number | null>
 }
+
+export type ToobarButtonProps = {
+  name: string
+  icon: IconDefinition
+  state: boolean | string
+}
+
+export type FullscreenButtonProps = object
 
 export type EditorToolbarProps = object
 

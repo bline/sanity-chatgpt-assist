@@ -4,6 +4,8 @@ import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react'
 import {animationSpeed} from '@/components/PromptEditor/constants'
 import {EditorContext} from '@/components/PromptEditor/context'
 
+import {ActionRegistration, ActionRegistrationStore} from './types'
+
 // so the polyfill works below
 declare global {
   interface Window {
@@ -12,12 +14,15 @@ declare global {
 }
 
 export const EditorProvider = ({children}: React.PropsWithChildren): React.ReactNode => {
+  const handlerRefs = useRef<Map<string, () => void>>(new Map())
+  // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
+  const [actions, setActions] = useState<Record<string, ActionRegistrationStore>>({})
   const [editorFlashStyles, setEditorFlashStyles] = useState<React.CSSProperties | null>(null)
   const [isToolbarShown, setIsToolbarShown] = useState(false)
   const [isToolbarVisible, setIsToolbarVisible] = useState(false) // For delayed hiding
   const [isToolbarLocked, setIsToolbarLocked] = useState(false)
   const [toolbarPosition, setToolbarPosition] = useState<'left' | 'center' | 'right'>('center')
-  const [fullscreenMode, setFullscreenMode] = useState<'normal' | 'panel' | 'fullscreen'>('normal')
+  const [editorSizeMode, setEditorSizeMode] = useState<'normal' | 'panel' | 'fullscreen'>('normal')
   const [isLineWrappingEnabled, setIsLineWrappingEnabled] = useState(true)
   const [isAutocompleteEnabled, setIsAutocompleteEnabled] = useState(true)
   const [isLineNumbersEnabled, setIsLineNumbersEnabled] = useState(false)
@@ -29,6 +34,65 @@ export const EditorProvider = ({children}: React.PropsWithChildren): React.React
   const audioContext = useRef<AudioContext | null>(null)
   const toolbarHideTimeout = useRef<number | null>(null)
   const editorFlashTimeout = useRef<number | null>(null)
+
+  // Add an action
+  const addAction = useCallback(
+    (name: string, {shortcut, description, handler}: ActionRegistration) => {
+      // Store the handler in the refs Map
+      handlerRefs.current.set(name, handler)
+
+      // Update state with the rest of the action properties
+      setActions((prev) => ({
+        ...prev,
+        [name]: {name, shortcut, description},
+      }))
+    },
+    [],
+  )
+  const getAction = useCallback(
+    (name: string) => {
+      const handler = handlerRefs.current.get(name)
+      const action = actions[name]
+      if (!handler || !action) {
+        return undefined
+      }
+      return {handler, ...action}
+    },
+    [actions],
+  )
+  const hasAction = useCallback(
+    (name: string): boolean => {
+      const handler = handlerRefs.current.get(name)
+      const action = actions[name]
+      return Boolean(handler && action)
+    },
+    [actions],
+  )
+  const removeAction = useCallback((name: string) => {
+    handlerRefs.current.delete(name) // Remove from refs
+    setActions((prev) => {
+      const newActions = {...prev}
+      delete newActions[name]
+      return newActions
+    })
+  }, [])
+
+  // Update an action's shortcut or other properties
+  const updateAction = useCallback((name: string, updates: ActionRegistrationStore) => {
+    setActions((prev) => ({
+      ...prev,
+      [name]: {
+        ...prev[name],
+        ...updates,
+      },
+    }))
+  }, [])
+
+  // Call a handler
+  const callActionHandler = useCallback((name: string) => {
+    const handler = handlerRefs.current.get(name) // Get the latest handler
+    if (handler) handler()
+  }, [])
 
   // preload the AudioContext so no delay when we need it
   useEffect(() => {
@@ -104,12 +168,6 @@ export const EditorProvider = ({children}: React.PropsWithChildren): React.React
     toolbarHideTimeout.current = window.setTimeout(() => setIsToolbarShown(false), animationSpeed)
   }, [isToolbarLocked, setIsToolbarVisible])
 
-  const handleToggleFullscreen = useCallback(() => {
-    setFullscreenMode((prev) =>
-      prev === 'normal' ? 'panel' : prev === 'panel' ? 'fullscreen' : 'normal',
-    )
-  }, [setFullscreenMode])
-
   const handleToggleLineWrapping = useCallback(() => {
     setIsLineWrappingEnabled((prev) => !prev)
   }, [setIsLineWrappingEnabled])
@@ -174,7 +232,7 @@ export const EditorProvider = ({children}: React.PropsWithChildren): React.React
     () => ({
       // getters
       editorFlashStyles,
-      fullscreenMode,
+      editorSizeMode,
       isAutocompleteEnabled,
       isEditorFocused,
       isKeyboardHelpShown,
@@ -185,9 +243,17 @@ export const EditorProvider = ({children}: React.PropsWithChildren): React.React
       isToolbarVisible,
       toolbarPosition,
 
+      // actions
+      addAction,
+      getAction,
+      hasAction,
+      removeAction,
+      updateAction,
+      callActionHandler,
+
       // setters
       setEditorFlashStyles,
-      setFullscreenMode,
+      setEditorSizeMode,
       setIsAutocompleteEnabled,
       setIsEditorFocused,
       setIsKeyboardHelpShown,
@@ -208,7 +274,6 @@ export const EditorProvider = ({children}: React.PropsWithChildren): React.React
       handleSetToolbarPositionRight,
       handleShowToolbar,
       handleToggleAutocomplete,
-      handleToggleFullscreen,
       handleToggleKeyboardHelp,
       handleToggleLineNumbers,
       handleToggleLineWrapping,
@@ -221,8 +286,11 @@ export const EditorProvider = ({children}: React.PropsWithChildren): React.React
       toolbarHideTimeout,
     }),
     [
+      addAction,
+      callActionHandler,
       editorFlashStyles,
-      fullscreenMode,
+      editorSizeMode,
+      getAction,
       handleEditorBlured,
       handleEditorFocused,
       handleHideToolbar,
@@ -232,11 +300,11 @@ export const EditorProvider = ({children}: React.PropsWithChildren): React.React
       handleSetToolbarPositionRight,
       handleShowToolbar,
       handleToggleAutocomplete,
-      handleToggleFullscreen,
       handleToggleKeyboardHelp,
       handleToggleLineNumbers,
       handleToggleLineWrapping,
       handleToggleToolbarLock,
+      hasAction,
       isAutocompleteEnabled,
       isEditorFocused,
       isKeyboardHelpShown,
@@ -245,7 +313,9 @@ export const EditorProvider = ({children}: React.PropsWithChildren): React.React
       isToolbarLocked,
       isToolbarShown,
       isToolbarVisible,
+      removeAction,
       toolbarPosition,
+      updateAction,
     ],
   )
   return <EditorContext.Provider value={contextValue}>{children}</EditorContext.Provider>
