@@ -1,37 +1,40 @@
-import {definePlugin, PortableTextInputProps} from 'sanity'
+import {definePlugin} from 'sanity'
 
-import ChatGPTAssistant from './components/chat-gpt-assistant'
-import {createSchema} from './schema'
-import {ChatGPTAssistConfig} from './types'
+import FieldPathSelector from '@/components/FieldPathSelector'
+import GenerateContentAction from '@/GenerateContentActon'
+import aiFieldMapping from '@/schema/aiFieldMapping'
+import aiPrompt from '@/schema/aiPrompt'
+import aiVariables from '@/schema/aiVariables'
+import {ChatGPTAssistConfig} from '@/types'
+
+export {aiFieldMapping, FieldPathSelector}
 
 const defaultConfig: ChatGPTAssistConfig = {
-    supportedFields: [{documentType: 'post', fieldKey: 'body.blockContent'}],
+  supportedDocuments: ['post'],
 }
 
 export const chatGPTAssist = definePlugin<Partial<ChatGPTAssistConfig>>((config = {}) => {
-    const pluginConfig: ChatGPTAssistConfig = {
-        supportedFields: [],
-        apiKey: config.apiKey,
-        apiUrl: config.apiUrl,
-    }
-    if (config.supportedFields) {
-        pluginConfig.supportedFields = [...config.supportedFields]
-    } else {
-        pluginConfig.supportedFields = [...defaultConfig.supportedFields]
-    }
-    return {
-        name: 'chatgpt-assist',
-        schema: {
-            types: () => {
-                return createSchema(pluginConfig)
-            },
-        },
-        form: {
-            components: {
-                input: (props: PortableTextInputProps) => {
-                    return ChatGPTAssistant({...props, pluginConfig})
-                },
-            },
-        },
-    }
+  const pluginConfig: ChatGPTAssistConfig = {
+    supportedDocuments: [],
+    apiKey: config.apiKey,
+    apiUrl: config.apiUrl,
+  }
+  if (config.supportedDocuments) {
+    pluginConfig.supportedDocuments = [...config.supportedDocuments]
+  } else {
+    pluginConfig.supportedDocuments = [...defaultConfig.supportedDocuments]
+  }
+  return {
+    name: 'chatgpt-assist',
+    schema: {
+      types: [aiPrompt, aiFieldMapping, aiVariables],
+    },
+    document: {
+      actions: (prev, context) => {
+        return pluginConfig.supportedDocuments.includes(context.schemaType)
+          ? [...prev, GenerateContentAction(pluginConfig)]
+          : prev
+      },
+    },
+  }
 })

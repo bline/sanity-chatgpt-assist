@@ -2,11 +2,11 @@
   "compilerOptions": {
     "rootDir": ".",
     "outDir": "./dist",
-
+    "types": ["jest", "node", "@testing-library/jest-dom", "@jest/globals"],
     "target": "esnext",
     "jsx": "preserve",
     "module": "preserve",
-    "moduleResolution": "bundler",
+    "moduleResolution": "Node",
     "esModuleInterop": true,
     "resolveJsonModule": true,
     "moduleDetection": "force",
@@ -15,7 +15,13 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "isolatedModules": true,
-
+    "allowJs": true,
+    "checkJs": false,
+    "baseUrl": ".", // Ensure baseUrl is set
+    "paths": {
+      "@tests/*": ["tests/*"],
+      "@/*": ["src/*"]
+    },
     // Don't emit by default, pkg-utils will ignore this when generating .d.ts files
     "noEmit": true
   }
