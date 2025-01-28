@@ -1,3 +1,4 @@
+import type {Extension} from '@codemirror/state'
 import {IconDefinition} from '@fortawesome/free-solid-svg-icons'
 import React from 'react'
 
@@ -40,9 +41,11 @@ export type EditorContextType = {
   isToolbarVisible: boolean
   toolbarPosition: 'left' | 'center' | 'right'
   editorFlashStyles: React.CSSProperties | null
+  editorExtensions: Extension[]
 
   // setters
   setEditorSizeMode: React.Dispatch<React.SetStateAction<'normal' | 'panel' | 'fullscreen'>>
+  setEditorExtensions: React.Dispatch<React.SetStateAction<Extension[]>>
   setIsAutocompleteEnabled: React.Dispatch<React.SetStateAction<boolean>>
   setIsEditorFocused: React.Dispatch<React.SetStateAction<boolean>>
   setIsKeyboardHelpShown: React.Dispatch<React.SetStateAction<boolean>>
@@ -61,6 +64,7 @@ export type EditorContextType = {
   removeAction: (name: string) => void
   updateAction: (name: string, updates: ActionRegistrationStore) => void
   callActionHandler: (name: string) => void
+  getActionNames: () => string[]
 
   // handlers
   handleHideToolbar: () => void

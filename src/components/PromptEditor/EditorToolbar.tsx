@@ -20,38 +20,12 @@ import React from 'react'
 
 import {animationSpeed} from '@/components/PromptEditor/constants'
 import useEditorContext from '@/components/PromptEditor/context'
+import useEditorSizeMode from '@/components/PromptEditor/hooks/useEditorSizeMode'
+import ToolbarButton from '@/components/PromptEditor/ToolbarButton'
 import {EditorToolbarProps, Handler} from '@/components/PromptEditor/types'
 import {getTooltip, uppercaseFirst} from '@/components/PromptEditor/utils'
-
-const ToolbarButton = ({
-  name,
-  icon,
-  isActive,
-  nextState,
-  onClick,
-  style,
-}: {
-  name: string
-  icon: IconDefinition
-  isActive: boolean
-  nextState?: string
-  onClick: () => void
-  style?: React.CSSProperties | undefined
-}) => {
-  const action = nextState ? uppercaseFirst(nextState) : isActive ? 'Disable' : 'Enable'
-  const tooltip = `${action} ${getTooltip(name)}`
-  return (
-    <Tooltip content={tooltip}>
-      <Button
-        icon={<FontAwesomeIcon icon={icon} size="sm" />}
-        mode={isActive ? 'default' : 'ghost'}
-        onClick={onClick}
-        style={style}
-        aria-label={tooltip}
-      />
-    </Tooltip>
-  )
-}
+import useEditorLineWrapping from '@/components/PromptEditor/hooks/useEditorLineWrapping'
+import useAutocomplete from '@/components/PromptEditor/hooks/useEditorAutocomplete'
 
 /*
 const ToolbarButtonGroup = ({
@@ -86,38 +60,26 @@ const EditorToolbar: React.FC<EditorToolbarProps> = () => {
   const theme = useTheme()
   const isDark = theme.sanity.v2?.color._dark
   const {
-    fullscreenMode,
     handleHideToolbar,
     handleSetToolbarPositionCenter,
     handleSetToolbarPositionLeft,
     handleSetToolbarPositionRight,
     handleShowToolbar,
-    handleToggleAutocomplete,
-    handleToggleFullscreen,
     handleToggleKeyboardHelp,
     handleToggleLineNumbers,
-    handleToggleLineWrapping,
     handleToggleToolbarLock,
-    isAutocompleteEnabled,
     isKeyboardHelpShown,
     isLineNumbersEnabled,
-    isLineWrappingEnabled,
     isToolbarLocked,
     isToolbarShown,
     isToolbarVisible,
     toolbarPosition,
   } = useEditorContext()
 
-  const fullscreenIcon: IconDefinition = {
-    fullscreen: faMinimize,
-    panel: faMaximize,
-    normal: faUpRightAndDownLeftFromCenter,
-  }[fullscreenMode]
-  const fullescreenNextState: string = {
-    panel: 'fullscreen',
-    normal: 'panel',
-    fullscreen: 'normal',
-  }[fullscreenMode]
+  const {editorSizeMode, editorSizeModeName, editorSizeModeIcon} = useEditorSizeMode()
+  const {isEditorLineWrapping, editorLineWrappingName, editorLineWrappingIcon} =
+    useEditorLineWrapping()
+  const {isAutocompleteEnabled, autocompleteName, autocompleteIcon} = useAutocomplete()
 
   const alignToobarIcon: IconDefinition = {
     left: faAlignCenter,
@@ -135,52 +97,49 @@ const EditorToolbar: React.FC<EditorToolbarProps> = () => {
     right: handleSetToolbarPositionLeft,
   }[toolbarPosition]
 
-  const toolbarPositionStyle: React.CSSProperties = {
-    left: {justifyContent: 'flex-start'},
-    center: {justifyContent: 'center'},
-    right: {justifyContent: 'flex-end'},
-  }[toolbarPosition]
-
   const toolbarStyle: React.CSSProperties = {
     position: 'absolute',
     top: 0,
     width: '100%',
-    zIndex: 10,
+    zIndex: 900,
     transition: `transform ${animationSpeed}ms ease-in-out, opacity ${animationSpeed}ms ease-in-out`,
     transform: isToolbarVisible ? 'translateY(0)' : 'translateY(-100%)',
     opacity: isToolbarVisible ? 1 : 0,
     backgroundColor: isDark ? '#333' : '#fff',
-    ...toolbarPositionStyle,
   }
   return (
     <>
       {!isToolbarVisible && (
         <Box
           onMouseEnter={handleShowToolbar}
-          style={{position: 'absolute', top: 0, left: 0, height: '2em', right: 0, opacity: 0}}
+          style={{
+            position: 'absolute',
+            top: '-1em',
+            left: 0,
+            height: '2em',
+            right: 0,
+            width: '100%',
+            opacity: 0,
+          }}
         />
       )}
       {isToolbarShown && (
         <Card style={toolbarStyle} onMouseLeave={handleHideToolbar} padding={2}>
           <Stack dir="row" space={1}>
             <ToolbarButton
-              icon={fullscreenIcon}
-              isActive={fullscreenMode === 'fullscreen' || fullscreenMode === 'panel'}
-              nextState={fullescreenNextState}
-              name="Mode"
-              onClick={handleToggleFullscreen}
+              name={editorSizeModeName}
+              icon={editorSizeModeIcon}
+              state={editorSizeMode}
             />
             <ToolbarButton
-              icon={faTextWidth}
-              isActive={isLineWrappingEnabled}
-              name="Line Wrapping"
-              onClick={handleToggleLineWrapping}
+              name={editorLineWrappingName}
+              icon={editorLineWrappingIcon}
+              state={isEditorLineWrapping}
             />
             <ToolbarButton
-              icon={faWandMagicSparkles}
-              isActive={isAutocompleteEnabled}
-              name="Autocomplete"
-              onClick={handleToggleAutocomplete}
+              icon={autocompleteIcon}
+              state={isAutocompleteEnabled}
+              name={autocompleteName}
             />
             <ToolbarButton
               icon={faListOl}

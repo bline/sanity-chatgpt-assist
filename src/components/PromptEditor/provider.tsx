@@ -1,4 +1,5 @@
 /* eslint-disable no-nested-ternary */
+import {Extension} from '@codemirror/state'
 import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react'
 
 import {animationSpeed} from '@/components/PromptEditor/constants'
@@ -18,6 +19,7 @@ export const EditorProvider = ({children}: React.PropsWithChildren): React.React
   // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
   const [actions, setActions] = useState<Record<string, ActionRegistrationStore>>({})
   const [editorFlashStyles, setEditorFlashStyles] = useState<React.CSSProperties | null>(null)
+  const [editorExtensions, setEditorExtensions] = useState<Extension[]>([])
   const [isToolbarShown, setIsToolbarShown] = useState(false)
   const [isToolbarVisible, setIsToolbarVisible] = useState(false) // For delayed hiding
   const [isToolbarLocked, setIsToolbarLocked] = useState(false)
@@ -76,6 +78,10 @@ export const EditorProvider = ({children}: React.PropsWithChildren): React.React
       return newActions
     })
   }, [])
+
+  const getActionNames = useCallback<() => string[]>(() => {
+    return Object.keys(actions)
+  }, [actions])
 
   // Update an action's shortcut or other properties
   const updateAction = useCallback((name: string, updates: ActionRegistrationStore) => {
@@ -231,6 +237,7 @@ export const EditorProvider = ({children}: React.PropsWithChildren): React.React
   const contextValue = useMemo(
     () => ({
       // getters
+      editorExtensions,
       editorFlashStyles,
       editorSizeMode,
       isAutocompleteEnabled,
@@ -250,8 +257,10 @@ export const EditorProvider = ({children}: React.PropsWithChildren): React.React
       removeAction,
       updateAction,
       callActionHandler,
+      getActionNames,
 
       // setters
+      setEditorExtensions,
       setEditorFlashStyles,
       setEditorSizeMode,
       setIsAutocompleteEnabled,
@@ -288,9 +297,11 @@ export const EditorProvider = ({children}: React.PropsWithChildren): React.React
     [
       addAction,
       callActionHandler,
+      editorExtensions,
       editorFlashStyles,
       editorSizeMode,
       getAction,
+      getActionNames,
       handleEditorBlured,
       handleEditorFocused,
       handleHideToolbar,

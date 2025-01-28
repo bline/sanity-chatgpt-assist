@@ -4,10 +4,9 @@ import {Button, Tooltip} from '@sanity/ui'
 import React from 'react'
 
 import useEditorContext from '@/components/PromptEditor/context'
+import {ToobarButtonProps} from '@/components/PromptEditor/types'
 import {assert} from '@/util/assert'
 import {toTitleCase} from '@/util/toTitleCase'
-
-import {ToobarButtonProps} from './types'
 
 const ToolbarButton: React.FC<ToobarButtonProps> = ({name, icon, state}) => {
   const {getAction, hasAction} = useEditorContext()
