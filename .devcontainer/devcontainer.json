@@ -1,0 +1,28 @@
+{
+  "name": "Astro Project",
+  "image": "mcr.microsoft.com/devcontainers/typescript-node",
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "terminal.integrated.shell.linux": "/bin/bash",
+        "editor.formatOnSave": true,
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "prettier.singleQuote": true,
+        "prettier.semi": false,
+        "prettier.printWidth": 100,
+        "prettier.bracketSpacing": false,
+        "prettier.tabWidth": 2,
+        "files.autoSave": "off",
+        "editor.codeActionsOnSave": {
+          "source.organizeImports": "always"
+        }
+      },
+      "extensions": [
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "astro-build.astro-vscode"
+      ]
+    }
+  },
+  "postCreateCommand": "npm install"
+}
