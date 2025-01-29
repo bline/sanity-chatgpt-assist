@@ -1,101 +1,34 @@
 /* eslint-disable no-nested-ternary */
-import {
-  faAlignCenter,
-  faAlignLeft,
-  faAlignRight,
-  faListOl,
-  faMaximize,
-  faMinimize,
-  faQuestionCircle,
-  faTextWidth,
-  faThumbTack,
-  faThumbTackSlash,
-  faUpRightAndDownLeftFromCenter,
-  faWandMagicSparkles,
-  IconDefinition,
-} from '@fortawesome/free-solid-svg-icons'
-import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
-import {Box, Button, Card, Stack, Tooltip, useTheme} from '@sanity/ui'
+import {faListOl, faThumbTack, faThumbTackSlash} from '@fortawesome/free-solid-svg-icons'
+import {Box, Card, Stack, useTheme} from '@sanity/ui'
 import React from 'react'
 
 import {animationSpeed} from '@/components/PromptEditor/constants'
 import useEditorContext from '@/components/PromptEditor/context'
-import useEditorSizeMode from '@/components/PromptEditor/hooks/useEditorSizeMode'
-import ToolbarButton from '@/components/PromptEditor/ToolbarButton'
-import {EditorToolbarProps, Handler} from '@/components/PromptEditor/types'
-import {getTooltip, uppercaseFirst} from '@/components/PromptEditor/utils'
-import useEditorLineWrapping from '@/components/PromptEditor/hooks/useEditorLineWrapping'
 import useAutocomplete from '@/components/PromptEditor/hooks/useEditorAutocomplete'
-
-/*
-const ToolbarButtonGroup = ({
-  icons,
-  isActives,
-  onClicks,
-  names,
-}: {
-  icons: IconDefinition[]
-  isActives: boolean[]
-  onClicks: Array<() => void>
-  names: string[]
-}) => (
-  <Stack dir="row" space={0}>
-    {onClicks.map((onClick, i) => (
-      <ToolbarButton
-        key={names[i]}
-        icon={icons[i]}
-        isActive={isActives[i]}
-        onClick={onClick}
-        name={names[i]}
-        style={{
-          borderRadius: i === 0 ? '5px 0 0 5px' : i === onClicks.length - 1 ? '0 5px 5px 0' : '0',
-        }}
-      />
-    ))}
-  </Stack>
-)
-*/
+import useEditorLineWrapping from '@/components/PromptEditor/hooks/useEditorLineWrapping'
+import useEditorSizeMode from '@/components/PromptEditor/hooks/features/useSizeMode'
+import useToolbarPinned from '@/components/PromptEditor/hooks/features/useToolbarPinned'
+import ToolbarButton from '@/components/PromptEditor/ToolbarButton'
+import {EditorToolbarProps} from '@/components/PromptEditor/types'
+import useEditorLineNumbers from '@/components/PromptEditor/hooks/useEditorLineNumbers'
+import useEditorShortcutHelp from '@/components/PromptEditor/hooks/features/useShortcutHelp'
 
 const EditorToolbar: React.FC<EditorToolbarProps> = () => {
   const theme = useTheme()
   const isDark = theme.sanity.v2?.color._dark
-  const {
-    handleHideToolbar,
-    handleSetToolbarPositionCenter,
-    handleSetToolbarPositionLeft,
-    handleSetToolbarPositionRight,
-    handleShowToolbar,
-    handleToggleKeyboardHelp,
-    handleToggleLineNumbers,
-    handleToggleToolbarLock,
-    isKeyboardHelpShown,
-    isLineNumbersEnabled,
-    isToolbarLocked,
-    isToolbarShown,
-    isToolbarVisible,
-    toolbarPosition,
-  } = useEditorContext()
+  const {handleHideToolbar, handleShowToolbar, isToolbarShown, isToolbarVisible} =
+    useEditorContext()
 
   const {editorSizeMode, editorSizeModeName, editorSizeModeIcon} = useEditorSizeMode()
   const {isEditorLineWrapping, editorLineWrappingName, editorLineWrappingIcon} =
     useEditorLineWrapping()
-  const {isAutocompleteEnabled, autocompleteName, autocompleteIcon} = useAutocomplete()
-
-  const alignToobarIcon: IconDefinition = {
-    left: faAlignCenter,
-    center: faAlignRight,
-    right: faAlignLeft,
-  }[toolbarPosition]
-  const alignToolbarNextState: string = {
-    left: 'Center',
-    center: 'Right',
-    right: 'Left',
-  }[toolbarPosition]
-  const alignToobarHandler: Handler = {
-    left: handleSetToolbarPositionCenter,
-    center: handleSetToolbarPositionRight,
-    right: handleSetToolbarPositionLeft,
-  }[toolbarPosition]
+  const {isEditorAutocompleteEnabled, editorAutocompleteName, editorAutocompleteIcon} =
+    useAutocomplete()
+  const {isToolbarPinned, toolbarPinnedName, toolbarPinnedIcon} = useToolbarPinned()
+  const {isEditorLineNumbered, editorLineNumbersName, editorLineNumbersIcon} =
+    useEditorLineNumbers()
+  const {isEditorShortcutHelpShown, editorShortcutHelpName, editorShortcutHelpIcon} = useEditorShortcutHelp()
 
   const toolbarStyle: React.CSSProperties = {
     position: 'absolute',
@@ -125,7 +58,7 @@ const EditorToolbar: React.FC<EditorToolbarProps> = () => {
       )}
       {isToolbarShown && (
         <Card style={toolbarStyle} onMouseLeave={handleHideToolbar} padding={2}>
-          <Stack dir="row" space={1}>
+          <Stack dir="row" space={0}>
             <ToolbarButton
               name={editorSizeModeName}
               icon={editorSizeModeIcon}
@@ -137,34 +70,24 @@ const EditorToolbar: React.FC<EditorToolbarProps> = () => {
               state={isEditorLineWrapping}
             />
             <ToolbarButton
-              icon={autocompleteIcon}
-              state={isAutocompleteEnabled}
-              name={autocompleteName}
+              icon={editorAutocompleteIcon}
+              state={isEditorAutocompleteEnabled}
+              name={editorAutocompleteName}
             />
             <ToolbarButton
-              icon={faListOl}
-              isActive={isLineNumbersEnabled}
-              name="Line Numbers"
-              onClick={handleToggleLineNumbers}
+              icon={editorLineNumbersIcon}
+              state={isEditorLineNumbered}
+              name={editorLineNumbersName}
             />
             <ToolbarButton
-              name="Align Toolbar"
-              icon={alignToobarIcon}
-              nextState={alignToolbarNextState}
-              isActive
-              onClick={alignToobarHandler}
+              icon={toolbarPinnedIcon}
+              state={isToolbarPinned}
+              name={toolbarPinnedName}
             />
             <ToolbarButton
-              icon={faQuestionCircle}
-              isActive={isKeyboardHelpShown}
-              name="Shortcut Help"
-              onClick={handleToggleKeyboardHelp}
-            />
-            <ToolbarButton
-              icon={isToolbarLocked ? faThumbTackSlash : faThumbTack}
-              isActive={isToolbarLocked}
-              name="Pin Toolbar"
-              onClick={handleToggleToolbarLock}
+              icon={editorShortcutHelpIcon}
+              state={isEditorShortcutHelpShown}
+              name={editorShortcutHelpName}
             />
           </Stack>
         </Card>
