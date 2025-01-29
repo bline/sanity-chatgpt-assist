@@ -1,0 +1,16 @@
+{
+  "workbench.colorTheme": "Default Dark+",
+  "editor.tabSize": 2,
+  "typescript.updateImportsOnFileMove.enabled": "always",
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "always"
+  },
+  "prettier.singleQuote": true,
+  "prettier.semi": false,
+  "prettier.printWidth": 100,
+  "prettier.bracketSpacing": false,
+  "prettier.tabWidth": 2,
+  "files.autoSave": "off"
+}
