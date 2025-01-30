@@ -122,14 +122,17 @@ const useShortcuts = (featureHandlers: Record<string, () => void>): UseShortcuts
     [allShortcutKeys, featureHandlers, normalizedShortcuts],
   )
 
-  return {
-    name: FEATURE_NAME,
-    get,
-    update,
-    reset,
-    getAll,
-    focusRef,
-  }
+  return useMemo<UseShortcutsReturn>(
+    () => ({
+      name: FEATURE_NAME,
+      get,
+      update,
+      reset,
+      getAll,
+      focusRef,
+    }),
+    [get, update, reset, getAll, focusRef],
+  )
 }
 
 export default useShortcuts

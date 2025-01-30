@@ -5,7 +5,7 @@ import {highlightSelectionMatches} from '@codemirror/search'
 import {highlightActiveLine, keymap, lineNumbers} from '@codemirror/view'
 import {EditorView, Extension} from '@uiw/react-codemirror'
 import {handlebarsLanguage} from '@xiechao/codemirror-lang-handlebars'
-import {useCallback, useEffect, useMemo, useState} from 'react'
+import {useCallback, useEffect, useState} from 'react'
 
 export type UseExtensionsReturn = {
   extensions: Extension[]
@@ -86,22 +86,13 @@ const useExtensions = (): UseExtensionsReturn => {
     ])
   }, [featureExtensions, featureExtensionState])
 
-  return useMemo(
-    () => ({
-      extensions,
-      setFeatureExtension,
-      disableFeatureExtension,
-      enableFeatureExtension,
-      isFeatureExtensionEnabled,
-    }),
-    [
-      disableFeatureExtension,
-      enableFeatureExtension,
-      extensions,
-      isFeatureExtensionEnabled,
-      setFeatureExtension,
-    ],
-  )
+  return {
+    extensions,
+    setFeatureExtension,
+    disableFeatureExtension,
+    enableFeatureExtension,
+    isFeatureExtensionEnabled,
+  }
 }
 
 export default useExtensions

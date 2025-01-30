@@ -12,5 +12,9 @@
     "plugin:prettier/recommended",
     "plugin:react/jsx-runtime",
     "@sanity/no-v2-imports"
-  ]
+  ],
+  "rules": {
+    "prettier/prettier": "error",
+    "import/order": ["error", { "alphabetize": { "order": "asc" } }]
+  }
 }

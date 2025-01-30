@@ -1,116 +1,75 @@
-import {
-  autocompletion,
-  closeBrackets,
-  CompletionContext,
-  CompletionResult,
-} from '@codemirror/autocomplete'
-import {defaultKeymap, historyKeymap} from '@codemirror/commands'
-import {bracketMatching} from '@codemirror/language'
-import {highlightSelectionMatches} from '@codemirror/search'
-import {highlightActiveLine, keymap} from '@codemirror/view'
 import {useTheme} from '@sanity/ui'
-import CodeMirror, {EditorView, Extension} from '@uiw/react-codemirror'
-import {handlebarsLanguage} from '@xiechao/codemirror-lang-handlebars'
-import React, {CSSProperties, useCallback, useMemo} from 'react'
-import {useFormValue} from 'sanity'
+import CodeMirror, {ReactCodeMirrorRef} from '@uiw/react-codemirror'
+import React, {CSSProperties, useCallback, useMemo, useState} from 'react'
 
-import useEditorContext from '@/components/PromptEditor/context'
-import {EditorContextType, EditorInputProps} from '@/components/PromptEditor/types'
-import {PromptDocument} from '@/types'
-import useBasicSetup from './hooks/useBasicSetup'
+import {SizeMode} from '@/components/PromptEditor/hooks/features/useSizeMode'
+import useBasicSetup from '@/components/PromptEditor/hooks/useBasicSetup'
+import useExtensions from '@/components/PromptEditor/hooks/useExtensions'
+import useShortcuts from '@/components/PromptEditor/hooks/useShortcuts'
+import {EditorInputProps} from '@/components/PromptEditor/types'
 
-const handlebarsContextRegex = /\{\{#?(if|each|with|eq)?\s*$/
-
+/**
+ * CodeMirror-based editor component with keyboard shortcuts, extensions, and dynamic size modes.
+ */
 const EditorInput: React.FC<EditorInputProps> = ({onChange, value}) => {
+  // Theme detection from Sanity UI
   const theme = useTheme()
   const isDark = theme.sanity.v2?.color._dark
-  const varConfig = useFormValue(['variablesConfig']) as PromptDocument['variablesConfig']
-  const {
-    editorFlashStyles,
-    handleEditorBlured,
-    handleEditorFocused,
-    isAutocompleteEnabled,
-    isEditorFocused,
-    isLineNumbersEnabled,
-    isLineWrappingEnabled,
-  } = useEditorContext()
 
-  const toAutocomplete = useMemo(
-    () => varConfig?.map(({variableName}) => variableName) || [],
-    [varConfig],
+  // State for tracking editor focus
+  const [isEditorFocused, setIsEditorFocused] = useState(false)
+
+  // Load feature settings from basic setup
+  const {features} = useBasicSetup()
+
+  // Get CodeMirror extensions
+  const {extensions} = useExtensions()
+
+  // Initialize shortcut handlers
+  const featureHandlers = useMemo(
+    () =>
+      Object.fromEntries(Object.values(features).map((feature) => [feature.name, feature.handler])),
+    [features],
   )
-  // eslint-disable-next-line no-warning-comments
-  // TODO: Move to Handlebars specific setting in case we need to decouple.
-  const customCompletionSource = useCallback(
-    (context: CompletionContext): CompletionResult | null => {
-      const isValidHandlebarsContext = (line: string, pos: number) =>
-        handlebarsContextRegex.test(line.slice(0, pos))
-      const word = context.matchBefore(/\w*/)
-      if (!word || word.from === word.to || !context.explicit) return null
+  const {focusRef} = useShortcuts(featureHandlers)
 
-      const lineText = context.state.doc.lineAt(context.pos).text
-      if (!isValidHandlebarsContext(lineText, context.pos)) return null
+  // Handle focus/blur events to track editor state
+  const handleFocus = useCallback(() => setIsEditorFocused(true), [])
+  const handleBlur = useCallback(() => setIsEditorFocused(false), [])
 
-      return {
-        from: word.from,
-        to: word.to,
-        options: toAutocomplete.map((variable) => ({
-          label: variable,
-          type: 'variable',
-          info: `Variable: ${variable}`,
-        })),
-        validFor: /\w*/,
-      }
-    },
-    [toAutocomplete],
-  )
+  /**
+   * Dynamically calculate editor styles based on focus and size mode.
+   */
   const getEditorStyles = useCallback<() => CSSProperties>(() => {
-    const editorHeightSettings: Record<
-      EditorContextType['fullscreenMode'],
-      CSSProperties['height']
-    > = {
+    const editorHeightSettings: Record<SizeMode, CSSProperties['height']> = {
       normal: '400px',
       panel: '800px',
       fullscreen: '100vh',
     }
     return {
-      ...editorFlashStyles,
-      ...(isEditorFocused ? {outline: '2px solid #0070f3'} : {}),
-      height: editorHeightSettings[fullscreenMode],
+      ...(isEditorFocused ? {outline: '2px solid #0070f3'} : {}), // Highlight outline on focus
+      height: editorHeightSettings[features.sizeMode.mode],
     }
-  }, [editorFlashStyles, isEditorFocused, fullscreenMode])
-  const extensions = useMemo<Extension[]>(() => {
-    const exts: Extension[] = [
-      handlebarsLanguage, // Always include Handlebars support until we decouple it
-      keymap.of([...defaultKeymap, ...historyKeymap]),
-      bracketMatching(),
-      closeBrackets(),
-      highlightActiveLine(),
-      highlightSelectionMatches(),
-    ]
-    if (isLineWrappingEnabled) exts.push(EditorView.lineWrapping) // Add line wrapping if enabled
-    if (isLineNumbersEnabled) exts.push(lineNumbers())
-    if (isAutocompleteEnabled) {
-      exts.push(
-        autocompletion({
-          override: [customCompletionSource], // Custom autocompletion logic
-        }),
-      )
-    }
-    return exts
-  }, [customCompletionSource, isAutocompleteEnabled, isLineNumbersEnabled, isLineWrappingEnabled])
-  const {features} = useBasicSetup()
+  }, [isEditorFocused, features.sizeMode])
 
+  const refHandler = useCallback(
+    (cm: ReactCodeMirrorRef | undefined | null) => {
+      focusRef(cm?.editor ?? null)
+    },
+    [focusRef],
+  )
   return (
     <CodeMirror
-      // eslint-disable-next-line react/jsx-no-bind
-      ref={(ref) => features.shortcuts.focusRef(ref?.editor)}
+      // Attach CodeMirror ref to focusRef for shortcut scope
+      ref={refHandler}
+      onFocus={handleFocus}
+      onBlur={handleBlur}
       onChange={onChange}
       value={value}
       style={getEditorStyles()}
       theme={isDark ? 'dark' : 'light'}
       extensions={extensions}
-      basicSetup={false}
+      basicSetup={false} // Custom setup managed via useExtensions
     />
   )
 }

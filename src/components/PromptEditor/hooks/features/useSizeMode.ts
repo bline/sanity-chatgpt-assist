@@ -4,22 +4,22 @@ import {
   faUpRightAndDownLeftFromCenter,
   type IconDefinition,
 } from '@fortawesome/free-solid-svg-icons'
-import {useCallback, useState} from 'react'
+import {useCallback, useMemo, useState} from 'react'
 
 // Define the possible editor size modes
-export type Mode = 'normal' | 'panel' | 'fullscreen'
+export type SizeMode = 'normal' | 'panel' | 'fullscreen'
 
 // Define the return type for the hook
 export type UseSizeModeReturn = {
   name: 'sizeMode'
-  mode: Mode
+  mode: SizeMode
   icon: IconDefinition
-  setMode: (value: Mode) => void
+  setMode: (value: SizeMode) => void
   handler: () => void
 }
 
 // Mapping for cycling through editor size modes
-const nextModeMap: Record<Mode, Mode> = {
+const nextModeMap: Record<SizeMode, SizeMode> = {
   normal: 'panel',
   panel: 'fullscreen',
   fullscreen: 'normal',
@@ -38,7 +38,7 @@ const FEATURE_NAME = 'sizeMode'
  */
 const useSizeMode = (): UseSizeModeReturn => {
   // State to track the current editor size mode
-  const [mode, setMode] = useState<Mode>('normal')
+  const [mode, setMode] = useState<SizeMode>('normal')
 
   // Handler to cycle to the next size mode
   const handler = useCallback(() => {
@@ -53,13 +53,16 @@ const useSizeMode = (): UseSizeModeReturn => {
   }[mode]
 
   // Return the current state, action handlers, and metadata for size mode management
-  return {
-    name: FEATURE_NAME,
-    mode,
-    icon,
-    handler,
-    setMode,
-  }
+  return useMemo(
+    () => ({
+      name: FEATURE_NAME,
+      mode,
+      icon,
+      handler,
+      setMode,
+    }),
+    [mode, icon, handler, setMode],
+  )
 }
 
 export default useSizeMode
