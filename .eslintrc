@@ -4,6 +4,7 @@
     "node": true,
     "browser": true
   },
+  "plugins": ["prettier", "import"],
   "extends": [
     "sanity",
     "sanity/typescript",
