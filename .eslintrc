@@ -4,17 +4,42 @@
     "node": true,
     "browser": true
   },
+  "plugins": ["react-hooks", "prettier", "react", "unused-imports", "import", "@typescript-eslint"],
   "extends": [
-    "sanity",
-    "sanity/typescript",
-    "sanity/react",
     "plugin:react-hooks/recommended",
     "plugin:prettier/recommended",
-    "plugin:react/jsx-runtime",
-    "@sanity/no-v2-imports"
+    "plugin:react/recommended",
+    "plugin:@typescript-eslint/recommended",
+    "prettier"
   ],
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "project": "./tsconfig.json",
+    "sourceType": "module"
+  },
+  "settings": {
+    "react": {
+      "version": "detect"
+    }
+  },
   "rules": {
+    "object-curly-spacing": "off",
+    "import/no-relative-parent-imports": "error",
+    "import/order": "off",
     "prettier/prettier": "error",
-    "import/order": ["error", { "alphabetize": { "order": "asc" } }]
-  }
+    "unused-imports/no-unused-imports": "error",
+    "unused-imports/no-unused-vars": [
+      "warn",
+      {"argsIgnorePattern": "^_", "varsIgnorePattern": "^_"}
+    ],
+    "simple-import-sort/imports": "off",
+    "simple-import-sort/exports": "off"
+  },
+  "overrides": [
+    {
+      "files": ["*.json", "*.jsonc"],
+      "parser": "jsonc-eslint-parser",
+      "extends": ["plugin:jsonc/recommended-with-json"]
+    }
+  ]
 }
