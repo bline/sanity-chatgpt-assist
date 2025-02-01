@@ -1,12 +1,13 @@
-import {useTheme} from '@sanity/ui'
-import CodeMirror, {ReactCodeMirrorRef} from '@uiw/react-codemirror'
-import React, {CSSProperties, useCallback, useMemo, useState} from 'react'
+import type {CSSProperties} from 'react'
+import React, {useCallback, useState} from 'react'
 
-import {SizeMode} from '@/components/PromptEditor/hooks/features/useSizeMode'
+import type {SizeMode} from '@/components/PromptEditor/hooks/features/useSizeMode'
 import useBasicSetup from '@/components/PromptEditor/hooks/useBasicSetup'
 import useExtensions from '@/components/PromptEditor/hooks/useExtensions'
 import useShortcuts from '@/components/PromptEditor/hooks/useShortcuts'
-import {EditorInputProps} from '@/components/PromptEditor/types'
+import type {EditorInputProps} from '@/components/PromptEditor/types'
+import {useTheme} from '@sanity/ui'
+import CodeMirror, {type ReactCodeMirrorRef} from '@uiw/react-codemirror'
 
 /**
  * CodeMirror-based editor component with keyboard shortcuts, extensions, and dynamic size modes.
@@ -20,18 +21,13 @@ const EditorInput: React.FC<EditorInputProps> = ({onChange, value}) => {
   const [isEditorFocused, setIsEditorFocused] = useState(false)
 
   // Load feature settings from basic setup
-  const {features} = useBasicSetup()
+  const features = useBasicSetup()
+
+  // initialize shortcuts
+  const {focusRef} = useShortcuts(features)
 
   // Get CodeMirror extensions
   const {extensions} = useExtensions()
-
-  // Initialize shortcut handlers
-  const featureHandlers = useMemo(
-    () =>
-      Object.fromEntries(Object.values(features).map((feature) => [feature.name, feature.handler])),
-    [features],
-  )
-  const {focusRef} = useShortcuts(featureHandlers)
 
   // Handle focus/blur events to track editor state
   const handleFocus = useCallback(() => setIsEditorFocused(true), [])

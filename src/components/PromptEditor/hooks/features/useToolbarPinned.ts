@@ -1,5 +1,6 @@
-import {faThumbtack, type IconDefinition} from '@fortawesome/free-solid-svg-icons'
-import {useCallback, useState} from 'react'
+import {useCallback, useMemo, useState} from 'react'
+
+import {type IconDefinition, faThumbtack} from '@fortawesome/free-solid-svg-icons'
 
 // Define the return type for the hook
 export type UseToolbarPinnedReturn = {
@@ -32,13 +33,16 @@ const useToolbarPinned = (): UseToolbarPinnedReturn => {
   }, [setIsPinned])
 
   // Return the current state, action handlers, and metadata for toolbar pinning
-  return {
-    name: FEATURE_NAME, // Unique name for this feature
-    icon: faThumbtack, // Icon representing the toolbar pinned state
-    isPinned, // Current state of the toolbar (pinned/unpinned)
-    setIsPinned, // Function to manually set the toolbar pinned state
-    handler, // Function to toggle the toolbar pinned state
-  }
+  return useMemo<UseToolbarPinnedReturn>(
+    () => ({
+      name: FEATURE_NAME, // Unique name for this feature
+      icon: faThumbtack, // Icon representing the toolbar pinned state
+      isPinned, // Current state of the toolbar (pinned/unpinned)
+      setIsPinned, // Function to manually set the toolbar pinned state
+      handler, // Function to toggle the toolbar pinned state
+    }),
+    [handler, isPinned],
+  )
 }
 
 export default useToolbarPinned

@@ -1,11 +1,10 @@
-import {faWandMagicSparkles, type IconDefinition} from '@fortawesome/free-solid-svg-icons'
 import {useCallback, useEffect, useMemo} from 'react'
-import {useFormValue} from 'sanity'
-
-import {handlebarsAutocomplete} from '@/components/PromptEditor/extensions/handlebarsAutocomplete'
-import type {PromptDocument} from '@/types'
 
 import useExtensions from '../useExtensions'
+import {handlebarsAutocomplete} from '@/components/PromptEditor/extensions/handlebarsAutocomplete'
+import type {PromptDocument} from '@/types'
+import {type IconDefinition, faWandMagicSparkles} from '@fortawesome/free-solid-svg-icons'
+import {useFormValue} from 'sanity'
 
 // Define the return type for the hook
 export type UseAutocompleteReturn = {
@@ -68,13 +67,17 @@ const useAutocomplete = (): UseAutocompleteReturn => {
   }, [toAutocomplete, setFeatureExtension])
 
   // Return the current state, action handlers, and metadata for autocompletion management
-  return {
-    name: FEATURE_NAME, // Unique name for this feature
-    icon: faWandMagicSparkles, // Icon representing autocompletion
-    isEnabled, // Current state of autocompletion (enabled/disabled)
-    setIsEnabled, // Function to manually set the autocompletion state
-    handler, // Function to toggle the autocompletion state
-  }
+  // We useMemo here because of the way this is accessed with the features object
+  return useMemo<UseAutocompleteReturn>(
+    () => ({
+      name: FEATURE_NAME, // Unique name for this feature
+      icon: faWandMagicSparkles, // Icon representing autocompletion
+      isEnabled, // Current state of autocompletion (enabled/disabled)
+      setIsEnabled, // Function to manually set the autocompletion state
+      handler, // Function to toggle the autocompletion state
+    }),
+    [isEnabled, setIsEnabled, handler],
+  )
 }
 
 export default useAutocomplete

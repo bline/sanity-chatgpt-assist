@@ -33,7 +33,14 @@
       {"argsIgnorePattern": "^_", "varsIgnorePattern": "^_"}
     ],
     "simple-import-sort/imports": "off",
-    "simple-import-sort/exports": "off"
+    "simple-import-sort/exports": "off",
+    "@typescript-eslint/consistent-type-imports": [
+      "error",
+      {
+        "prefer": "type-imports",
+        "fixStyle": "separate-type-imports"
+      }
+    ]
   },
   "overrides": [
     {

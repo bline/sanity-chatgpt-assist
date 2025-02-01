@@ -1,10 +1,11 @@
+import {useCallback, useMemo, useState} from 'react'
+
 import {
+  type IconDefinition,
   faMaximize,
   faMinimize,
   faUpRightAndDownLeftFromCenter,
-  type IconDefinition,
 } from '@fortawesome/free-solid-svg-icons'
-import {useCallback, useMemo, useState} from 'react'
 
 // Define the possible editor size modes
 export type SizeMode = 'normal' | 'panel' | 'fullscreen'

@@ -1,7 +1,7 @@
-import {faListOl, type IconDefinition} from '@fortawesome/free-solid-svg-icons'
-import {useCallback} from 'react'
+import {useCallback, useMemo} from 'react'
 
-import useExtensions from '../useExtensions'
+import useExtensions from '@/components/PromptEditor/hooks/useExtensions'
+import {type IconDefinition, faListOl} from '@fortawesome/free-solid-svg-icons'
 
 // Define the return type for the hook
 export type UseLineNumbersReturn = {
@@ -44,13 +44,16 @@ const useLineNumbers = (): UseLineNumbersReturn => {
   }, [setIsEnabled, isEnabled])
 
   // Return the current state, action handlers, and metadata for line numbers
-  return {
-    name: FEATURE_NAME, // Unique name for this feature
-    icon: faListOl, // Icon representing the line numbers feature
-    isEnabled, // Current state of the line numbers feature (enabled/disabled)
-    setIsEnabled, // Function to manually set the line numbers state
-    handler, // Function to toggle the line numbers state
-  }
+  return useMemo<UseLineNumbersReturn>(
+    () => ({
+      name: FEATURE_NAME, // Unique name for this feature
+      icon: faListOl, // Icon representing the line numbers feature
+      isEnabled, // Current state of the line numbers feature (enabled/disabled)
+      setIsEnabled, // Function to manually set the line numbers state
+      handler, // Function to toggle the line numbers state
+    }),
+    [isEnabled, setIsEnabled, handler],
+  )
 }
 
 export default useLineNumbers

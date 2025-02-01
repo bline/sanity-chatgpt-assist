@@ -1,5 +1,6 @@
-import {faKeyboard, type IconDefinition} from '@fortawesome/free-solid-svg-icons'
 import {useCallback, useMemo, useState} from 'react'
+
+import {type IconDefinition, faKeyboard} from '@fortawesome/free-solid-svg-icons'
 
 // Define the return type for the hook
 export type UseShortcutHelpReturn = {

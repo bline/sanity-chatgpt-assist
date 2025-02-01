@@ -1,3 +1,5 @@
+import {useMemo} from 'react'
+
 import useAutocomplete from '@/components/PromptEditor/hooks/features/useAutocomplete'
 import useLineNumbers from '@/components/PromptEditor/hooks/features/useLineNumbers'
 import useLineWrapping from '@/components/PromptEditor/hooks/features/useLineWrapping'
@@ -5,16 +7,16 @@ import useShortcutHelp from '@/components/PromptEditor/hooks/features/useShortcu
 import useSizeMode from '@/components/PromptEditor/hooks/features/useSizeMode'
 import useToolbarPinned from '@/components/PromptEditor/hooks/features/useToolbarPinned'
 
-export type UseBasicSetupReturn = {
-  features: {
-    lineNumbers: ReturnType<typeof useLineNumbers>
-    lineWrapping: ReturnType<typeof useLineWrapping>
-    sizeMode: ReturnType<typeof useSizeMode>
-    autocomplete: ReturnType<typeof useAutocomplete>
-    shortcutHelp: ReturnType<typeof useShortcutHelp>
-    toolbarPinned: ReturnType<typeof useToolbarPinned>
-  }
+export type UseBasicSetupFeatures = {
+  lineNumbers: ReturnType<typeof useLineNumbers>
+  lineWrapping: ReturnType<typeof useLineWrapping>
+  sizeMode: ReturnType<typeof useSizeMode>
+  autocomplete: ReturnType<typeof useAutocomplete>
+  shortcutHelp: ReturnType<typeof useShortcutHelp>
+  toolbarPinned: ReturnType<typeof useToolbarPinned>
 }
+
+export type UseBasicSetupReturn = UseBasicSetupFeatures
 
 /**
  * Centralized hook to manage editor features.
@@ -25,16 +27,23 @@ export type UseBasicSetupReturn = {
  * @returns An object containing all feature states/handlers.
  */
 const useBasicSetup = (): UseBasicSetupReturn => {
-  return {
-    features: {
-      lineNumbers: useLineNumbers(),
-      lineWrapping: useLineWrapping(),
-      sizeMode: useSizeMode(),
-      autocomplete: useAutocomplete(),
-      shortcutHelp: useShortcutHelp(),
-      toolbarPinned: useToolbarPinned(),
-    },
-  }
+  const lineNumbers = useLineNumbers()
+  const lineWrapping = useLineWrapping()
+  const sizeMode = useSizeMode()
+  const autocomplete = useAutocomplete()
+  const shortcutHelp = useShortcutHelp()
+  const toolbarPinned = useToolbarPinned()
+  return useMemo(
+    () => ({
+      lineNumbers,
+      lineWrapping,
+      sizeMode,
+      autocomplete,
+      shortcutHelp,
+      toolbarPinned,
+    }),
+    [autocomplete, lineNumbers, lineWrapping, shortcutHelp, sizeMode, toolbarPinned],
+  )
 }
 
 export default useBasicSetup

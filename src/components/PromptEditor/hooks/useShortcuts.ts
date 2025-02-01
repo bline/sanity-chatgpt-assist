@@ -1,9 +1,10 @@
 import {useCallback, useMemo} from 'react'
-import {useHotkeys} from 'react-hotkeys-hook'
-import type {RefType} from 'react-hotkeys-hook/dist/types'
 
+import type {UseBasicSetupFeatures} from '@/components/PromptEditor/hooks/useBasicSetup'
 import useLocalStorage from '@/hooks/useLocalStorage'
 import {assert} from '@/util/assert'
+import {useHotkeys} from 'react-hotkeys-hook'
+import type {RefType} from 'react-hotkeys-hook/dist/types'
 
 // Default shortcuts for editor features
 const defaultShortcuts: Record<string, string> = {
@@ -33,10 +34,16 @@ const FEATURE_NAME = 'shortcuts'
  * @param featureHandlers - A dictionary of handlers for each feature.
  * @returns Shortcut management methods and `focusRef` for scoping shortcuts.
  */
-const useShortcuts = (featureHandlers: Record<string, () => void>): UseShortcutsReturn => {
+const useShortcuts = (features: UseBasicSetupFeatures): UseShortcutsReturn => {
   const [shortcuts, setShortcuts] = useLocalStorage<Record<string, string>>(
     'editorShortcuts',
     defaultShortcuts,
+  )
+
+  const featureHandlers = useMemo(
+    () =>
+      Object.fromEntries(Object.values(features).map((feature) => [feature.name, feature.handler])),
+    [features],
   )
 
   // Retrieve a specific shortcut

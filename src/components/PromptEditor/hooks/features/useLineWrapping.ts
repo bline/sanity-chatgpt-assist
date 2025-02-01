@@ -1,7 +1,7 @@
-import {faTextWidth, type IconDefinition} from '@fortawesome/free-solid-svg-icons'
 import {useCallback, useMemo} from 'react'
 
 import useExtensions from '../useExtensions'
+import {type IconDefinition, faTextWidth} from '@fortawesome/free-solid-svg-icons'
 
 // Define the editor size modes (if relevant elsewhere in the app)
 export type EditorSizeMode = 'normal' | 'panel' | 'fullscreen'
