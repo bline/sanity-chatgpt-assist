@@ -1,6 +1,6 @@
 import {useCallback, useMemo} from 'react'
 
-import type {UseBasicSetupFeatures} from '@/components/PromptEditor/hooks/useBasicSetup'
+import type {UseBasicSetupFeatures} from '@/components/PromptEditor/hooks/useEditor'
 import useLocalStorage from '@/hooks/useLocalStorage'
 import {assert} from '@/util/assert'
 import {useHotkeys} from 'react-hotkeys-hook'
@@ -24,6 +24,8 @@ export type UseShortcutsReturn = {
   focusRef: (instance: RefType<HTMLDivElement>) => void
 }
 
+export type UseShortcutsProps = Record<keyof UseBasicSetupFeatures, () => void>
+
 const FEATURE_NAME = 'shortcuts'
 /**
  * Hook to manage keyboard shortcuts for editor features.
@@ -34,16 +36,10 @@ const FEATURE_NAME = 'shortcuts'
  * @param featureHandlers - A dictionary of handlers for each feature.
  * @returns Shortcut management methods and `focusRef` for scoping shortcuts.
  */
-const useShortcuts = (features: UseBasicSetupFeatures): UseShortcutsReturn => {
+const useShortcuts = (featureHandlers: UseShortcutsProps): UseShortcutsReturn => {
   const [shortcuts, setShortcuts] = useLocalStorage<Record<string, string>>(
     'editorShortcuts',
     defaultShortcuts,
-  )
-
-  const featureHandlers = useMemo(
-    () =>
-      Object.fromEntries(Object.values(features).map((feature) => [feature.name, feature.handler])),
-    [features],
   )
 
   // Retrieve a specific shortcut
@@ -112,7 +108,7 @@ const useShortcuts = (features: UseBasicSetupFeatures): UseShortcutsReturn => {
       // Find which feature corresponds to the pressed shortcut
       const feature = Object.keys(normalizedShortcuts).find((key) =>
         normalizedShortcuts[key].some((shortcut) => shortcut === hotkey.hotkey.toLowerCase()),
-      )
+      ) as keyof UseShortcutsProps
 
       // Execute the handler for the matched feature, if it exists
       if (feature) {

@@ -2,9 +2,8 @@ import type {CSSProperties} from 'react'
 import React, {useCallback, useState} from 'react'
 
 import type {SizeMode} from '@/components/PromptEditor/hooks/features/useSizeMode'
-import useBasicSetup from '@/components/PromptEditor/hooks/useBasicSetup'
+import useEditor from '@/components/PromptEditor/hooks/useEditor'
 import useExtensions from '@/components/PromptEditor/hooks/useExtensions'
-import useShortcuts from '@/components/PromptEditor/hooks/useShortcuts'
 import type {EditorInputProps} from '@/components/PromptEditor/types'
 import {useTheme} from '@sanity/ui'
 import CodeMirror, {type ReactCodeMirrorRef} from '@uiw/react-codemirror'
@@ -21,10 +20,10 @@ const EditorInput: React.FC<EditorInputProps> = ({onChange, value}) => {
   const [isEditorFocused, setIsEditorFocused] = useState(false)
 
   // Load feature settings from basic setup
-  const features = useBasicSetup()
+  const {features, shortcuts} = useEditor()
 
-  // initialize shortcuts
-  const {focusRef} = useShortcuts(features)
+  // ref handler to ensure keybindings only happen in the editor
+  const {focusRef} = shortcuts
 
   // Get CodeMirror extensions
   const {extensions} = useExtensions()
@@ -37,6 +36,7 @@ const EditorInput: React.FC<EditorInputProps> = ({onChange, value}) => {
    * Dynamically calculate editor styles based on focus and size mode.
    */
   const getEditorStyles = useCallback<() => CSSProperties>(() => {
+    // XXX this needs to be better
     const editorHeightSettings: Record<SizeMode, CSSProperties['height']> = {
       normal: '400px',
       panel: '800px',
